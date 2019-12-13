@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<!--===========================================================================================
+//
+// Web site: DoorCrash
+// Web page: Order Page
+// Course:   CSC 5750
+// Homework: <5>
+// Author:   <Anusha Reddy Nandikonda>
+// Date:     <12/05/2019>
+// Website Description:
+//           <service that delivers food from local restaurants to customer residences>
+//
+// Page Description:
+//         <Form to place your order>
+//
+//===========================================================================================-->
+	
+<head>
+		<meta charset="utf-8">
+		<title>Door Crash Food Delivery Website, v5</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="Description" lang="en" content="Online food Delivery Website">
+		<meta name="author" content="Anusha Reddy Nandikonda">
+		<meta name="robots" content="index, follow">
+
+		<!-- icons -->
+		<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+		<link rel="shortcut icon" href="favicon.ico">
+
+		<!-- jQuery link -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+		</script>
+
+		<!-- Override CSS file - add your own CSS rules -->
+		<link rel="stylesheet" href="styles.css">
+
+		<script type="text/javascript">
+			"use strict";
+			//declare an array to retrieve the data from local storage
+			var arrayRestro = [];
+			var selectedItemCost;
+			var selectedItem;
+			var select = "";
+			var id = 0;
+			var quantity = 0;
+			var order = 0;
+			var defaultOptionText = 'Food Item...';
+
+			//getFoodItems method which retrieves data from the database sending request
+			function getFoodItemsResponse()
+			{
+				// Create server request
+				var xhttp = new XMLHttpRequest();
+
+				 // Define callback function
+				 xhttp.onreadystatechange = function() 
+       			 {
+         			if (this.readyState == 4 && this.status == 200)
+          			{
+						// parsing the response to json 
+         				arrayRestro = JSON.parse(this.responseText);
+         			}
+    			 };
+        
+       			// Define command [Get request for list ]and send
+				xhttp.open("GET", "DoorCrash-DatabaseInterface.php?request=list", false);
+        		xhttp.send();
+				console.log(arrayRestro);
+				 //Checking whether data is retrieved or not
+				if(arrayRestro.length > 0)
+				{
+					alert("Data Retrieved");
+				}
+				else
+				{
+					alert("Data not Retrieved");
+				}
+			}
+							
+			
+
+			//clearing the Combo Box 
+			function runClearNodesComboBox()
+			{
+				var select = document.getElementById('cmbItems');
+				if (select.hasChildNodes()) {
+					select.innerHTML = null;
+				}
+			}
+
+			//Setting the food items in the combo box when a restaurant name is selected.
+			function setFoodItems()
+			{
+				var value;
+				
+
+				runClearNodesComboBox();
+
+				//Adding Default Item "Food Item" in the comboBox
+				var defaultOpt = document.createElement("option");
+				defaultOpt.innerHTML = defaultOptionText;
+				defaultOpt.value = defaultOptionText;
+				defaultOpt.defaultSelected = true;
+				cmbItems.appendChild(defaultOpt);
+				//selecting the restaurant name
+				if(SushiFan.checked)
+				{
+					select = "Sushi Fan";
+				}
+				else if(OrangeTree.checked)
+				{
+					select = "Orange Tree";
+				}
+				else if(IndianSpices.checked)
+				{
+					select = "Indian Spices";
+				}
+				else if(TulipTea.checked)
+				{
+					select = "Tulip Tea";
+				}
+
+				//taking FoodItems and their prices to add in the Combo Box from array
+				for(var i = 0; i < arrayRestro.length; i++)
+				{
+					if(select == arrayRestro[i][1])
+					{
+						var opt = document.createElement("option");
+						var optionText = arrayRestro[i][2] + "$"+ arrayRestro[i][3];
+						opt.innerHTML = optionText;
+						opt.value = optionText;
+						cmbItems.appendChild(opt);
+					}
+				}
+				cmbItems.onchange();
+			}
+
+			//Function to add the price of the item which is selected in the combo Box
+			function selectFoodItem(value)
+			{
+				if (value.toString() != defaultOptionText) {
+					//Price from the combo box selected value
+					selectedItemCost = parseFloat(value.split('$')[1]);
+					document.getElementById('cost').value = selectedItemCost;
+
+					//FoodItem from the combo box selected value
+					selectedItem = value.split('$')[0];
+
+					for(var i = 0; i < arrayRestro.length; i++)
+					{
+						if(select == arrayRestro[i][1] && selectedItem == arrayRestro[i][2]) 
+						{
+							//retrieving id of the selected fooditem
+							id = arrayRestro[i][0];
+							console.log(id);
+						}
+					}
+				}
+				
+			}
+
+			//Updating the Read only text boxes that are SubTotal, Tax, Total
+			function updateCosts(value)
+			{
+				if (value == null || value == '') {
+				document.getElementById('subtotal').value = '';
+				document.getElementById('tax').value = '';
+				document.getElementById('total').value = '';
+				}
+				//Calulating Subtotal which is the cost of the food Item according to the quantity of the Item.
+				var subtotal = selectedItemCost * parseInt(value);
+				document.getElementById('subtotal').value = (subtotal.toFixed(2)).toString();
+				//Calculating the tax which is 6% of the subtotal.
+				document.getElementById('tax').value = ((subtotal * .06).toFixed(2)).toString();
+				//Calculating Total cost of the order which is sum of both subtotal and the tax.
+				document.getElementById('total').value = ((subtotal + (subtotal * .06)).toFixed(2)).toString();
+			}
+
+
+			function updateCounts()
+			{
+				for(var i = 0; i < arrayRestro.length; i++)
+				{
+					if(select == arrayRestro[i][1] && selectedItem == arrayRestro[i][2]) 
+					{
+						//retrieving the quantity sold and order sold values of the selected food item
+						quantity = parseInt(arrayRestro[i][4]);
+						order = parseInt(arrayRestro[i][5]);
+						console.log(quantity);
+						console.log(order);
+					}
+				}
+
+				//retriveing data from the quantity text box from the form and parsing the value to int
+				var q = parseInt(document.getElementById('Quantity').value);
+				console.log(q);
+				//Updating the quantity sold vaue
+				quantity = quantity + q;
+				//updating order sold value
+				order = order + 1;
+				console.log(quantity);
+				console.log(order);
+				//ajax synchrouns call for upadate request
+				$.ajax({
+					url: 'DoorCrash-DatabaseInterface.php?request=update',
+      				type: 'GET',
+					data: {id:id.valueOf(), quantity:quantity.valueOf(), order:order.valueOf()},
+					cache: false,   
+					async: false,    
+      				success: function(data){
+						 console.log("QuantitySold and OrderSold are updated")
+					  } 
+				});
+				
+			}
+
+		</script>
+	</head>
+	<!--Starting of the Body-->
+	<body onload="getFoodItemsResponse()">
+		<!--Header-->
+		<div class="header">
+			<div class="container">
+				<h1 class="header-heading">DOOR CRASH</h1>
+			</div>
+		</div>
+		<!--Navigation Bar-->
+		<div class="nav-bar">
+			<div class="container">
+				<ul class="nav">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="restaurant.html">Restaurant</a></li>
+					<li><a href="order.html">Order</a></li>
+				</ul>
+			</div>
+		</div>
+		<!--Order Form-->
+		<div class="content">
+			<div class="container">
+				<div class="main">
+					<h1><b>PLACE ORDER</b></h1>
+					<hr>
+					<!--Displaying it in this URI-->
+					<form method="POST" enctype="application/x-www-form-urlencoded" onsubmit="updateCounts()" action="OrderConfirmation.php">
+					  	<!--Name of Customer-->
+					  <label><b>Customer name:</b></label>
+					  <input type="text" name="CustomerName" value="" required>
+					  <br><br>
+						<!--Address of the customer-->
+					  <label><b>Customer Address:</b></label>
+					  <input type="text" name="CustomerAddress" value="" required>
+					  <br><br>
+						<!--Phone Number of the Customer-->
+					  <label><b>Customer Phone:</b></label>
+					  <input type="tel" id="phone" name="CustomerPhone"pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+					  <small>Format: 123-456-7890</small> 
+					  <br><br>
+						<!--Name of the Restaurant you want to order-->
+					  <label><b>Restaurant Name:</b></label>
+					  <fieldset class="fieldsetStyle">
+							<input type="radio" name="RestaurantName" id="SushiFan" value="Sushi Fan" onclick="setFoodItems()"> Sushi Fan<br>
+							<input type="radio" name="RestaurantName" id="OrangeTree" value="Orange Tree" onclick="setFoodItems()"> Orange Tree<br>
+							<input type="radio" name="RestaurantName" id="IndianSpices" value="Indian Spices" onclick="setFoodItems()"> Indian Spices<br>
+							<input type="radio" name="RestaurantName" id="TulipTea" value="Tulip Tea" onclick="setFoodItems()"> Tulip Tea<br>
+					  </fieldset>
+					  <br><br>
+						<!--Food Item you want to order-->
+					  <label><b>Food Item:</b></label>
+					  <select id="cmbItems" name="FoodItem" onchange="selectFoodItem(this.value)"></select>
+					  <br><br>
+						<!--Quantity of Food Item you want to order-->
+					  <label><b>Quantity of Food Item:</b></label>
+					  <input type="number" name="Quantity"  id="Quantity" step="1"  oninput="updateCosts(this.value)" required>
+					  <br><br>
+					    <!--Cost of the Item you want to order-->
+					  <label><b>Cost of the Item: </b></label>
+					  <input type="text" name="price" id="cost" readonly>
+					  <br><br>
+					  	<!--Subtotal of the order-->
+					  <label><b>Order Subtotal:</b> </label>
+					  <input type="text" name="subtotal" id="subtotal" readonly>
+					  <br><br>
+					  	<!--Tax of the order-->
+					  <label><b>Order Tax: </b></label>
+					  <input type="text" name="tax" id="tax" readonly>
+					  <br><br>
+					  	<!--Total cost of the order-->
+				      <label><b>Order Total:</b> </label>
+					  <input type="text" name="total" id="total" readonly>
+					  <br><br>
+
+
+                      
+                      <!--Button to Submit-->
+                      <input class="btn" type="submit" value="Submit" >
+                    </form>                 
+                </div>
+			</div>
+		</div>
+		<!--Footer-->
+		<div class="footer">
+			<div class="container">
+					<!--Delivery Address with contact Info and copyright-->
+					<h6>Door Crash, 13408 15 Mile Rd, Sterling Heights, MI 48312 &nbsp;&nbsp;
+							<a class="emailStyle" href="mailto:custmoersupport@doorcrash.com">E-mail</a>&nbsp;Contact : 313-509-0000&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&copy; Copyright 2016
+					</h6>
+			</div>
+		</div>
+	</body>
+	<!--End of the Body-->
+</html>

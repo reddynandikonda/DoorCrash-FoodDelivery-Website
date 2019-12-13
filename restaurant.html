@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<!--===========================================================================================
+//
+// Web site: DoorCrash
+// Web page: Restaurant Page
+// Course:   CSC 5750
+// Homework: <5>
+// Author:   <Anusha Reddy Nandikonda>
+// Date:     <12/05/2019>
+// Website Description:
+//           <service that delivers food from local restaurants to customer residences>
+//
+// Page Description:
+//         <Contains Reatuarant Details and its Menu >
+//
+//===========================================================================================-->
+
+<head>
+		<meta charset="utf-8">
+		<title>Door Crash Food Delivery Website, v5</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="Description" lang="en" content="Online food Delivery Website">
+		<meta name="author" content="Anusha Reddy Nandikonda">
+		<meta name="robots" content="index, follow">
+
+		<!-- icons -->
+		<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+		<link rel="shortcut icon" href="favicon.ico">
+
+		<!-- Override CSS file - add your own CSS rules -->
+		<link rel="stylesheet" href="styles.css">
+
+		<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
+		<!-- jQuery link (needed for DataTables) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+		</script>
+		  
+		<!-- DataTables CSS and script links -->
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+		<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js">
+		</script>
+
+		<!-- JSON File Reference-->
+		<script type="text/javascript" src="RestaurantData.json"></script>
+		
+	</head>
+	<!--Starting of the Body-->
+	<body>
+		<!--Header-->
+		<div class="header">
+			<div class="container">
+				<h1 class="header-heading">DOOR CRASH</h1>
+			</div>
+		</div>
+		<!--Navigation Bar-->
+		<div class="nav-bar">
+			<div class="container">
+				<ul class="nav">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="restaurant.html">Restaurant</a></li>
+					<li><a href="order.html">Order</a></li>
+				</ul>
+			</div>
+		</div>
+		<!--Resturant Details-->
+		<div class="content">
+			<div class="container">
+				<div class="main">
+					<h1><b>RESTAURANT</b></h1>
+					<hr>
+                    
+                                    
+                    
+                    
+					<!--Restaurant Menu with Prices -->
+					<h3>Servies of the Restaurant</h3>
+					<p>Food Items and there prices available in Restaurants</p>
+					<table id="Restaurant_Table" class="table table-striped">
+						<thead>
+							<tr>
+								<th>Restaurant name</th>
+								<th>Food items</th>
+								<th>prices</th>
+								<th>Estimated time of delivery</th>
+								<th>Delivery mode</th>
+								<th>Restaurant image</th>
+							</tr>
+						
+						</thead>
+					</table>
+					<!-- DataTables script -->
+					
+					
+					<script type="text/javascript">
+					  "use strict";
+					  
+					  
+					$(document).ready(function()
+    				{   
+						$('#Restaurant_Table').DataTable({
+							ajax : "RestaurantData.json",
+							"autoWidth" : false
+						});
+    				}); 
+    
+  				    </script>  
+
+							  
+				</div>
+			</div>
+		</div>
+		<!--Footer-->
+		<div class="footer">
+			<div class="container">
+					<!--Delivery Address with contact info and Copyright-->
+					<h6>Door Crash, 13408 15 Mile Rd, Sterling Heights, MI 48312 &nbsp;&nbsp;
+							<a class="emailStyle" href="mailto:custmoersupport@doorcrash.com">E-mail</a>&nbsp;Contact : 313-509-0000&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&copy; Copyright 2016
+					</h6>
+			</div>
+		</div>
+	</body>
+	<!--End of the Body-->
+</html>
